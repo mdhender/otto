@@ -1,0 +1,14 @@
+*~
+*.docx
+*.exe
+*.pdf
+*.swp
+*.tar
+*.tgz
+*.xlsx
+.DS_Store
+.idea/
+node_modules/
+otto
+package.json
+package-lock.json
