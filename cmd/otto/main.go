@@ -4,18 +4,35 @@ import (
 	"context"
 	"errors"
 	"fmt"
+	"github.com/inconshreveable/mousetrap"
 	"github.com/mdhender/otto/internal/server"
 	"log"
 	"net/http"
 	"os"
 	"os/signal"
+	"runtime/debug"
 	"syscall"
 	"time"
 )
 
 func main() {
-	if err := run(); err != nil {
-		log.Fatal(err)
+	var err error
+	defer func() {
+		exitStatus := 0
+		if r := recover(); r != nil {
+			log.Printf("%s\n\n%s", r, debug.Stack())
+			exitStatus = 1 // so that we can exit with a non-zero exit code
+		}
+		if mousetrap.StartedByExplorer() {
+			fmt.Println("Press return to continue...")
+			_, _ = fmt.Scanln()
+		}
+		os.Exit(exitStatus)
+	}()
+
+	err = run()
+	if err != nil {
+		log.Printf("error: %v\n", err)
 	}
 }
 
@@ -47,7 +64,7 @@ func run() error {
 	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
 	defer cancel()
 	if err := app.Shutdown(ctx); err != nil {
-		log.Fatalf("[server] failed to shutdown server: %s", err)
+		return errors.Join(fmt.Errorf("[server] failed to shutdown server"), err)
 	}
 
 	// If we got this far, it was an interrupt, so don't exit cleanly
