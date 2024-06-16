@@ -1,11 +1,10 @@
-// Copyright (c) 2024 Michael D Henderson. All rights reserved.
-
-// Package aha implements an AHA stack.
-package aha
+package server
 
 import (
 	"errors"
 	"fmt"
+	_ "github.com/joho/godotenv/autoload"
+	"github.com/mdhender/otto/internal/database"
 	"net"
 	"net/http"
 	"os"
@@ -18,27 +17,31 @@ type Server struct {
 	scheme string
 	host   string
 	port   string
-	mux    *http.ServeMux
 	paths  struct {
 		public    string // path to public files
 		templates string // path to template files
 	}
+	db database.Service
 }
 
-func New(options ...Option) (*Server, error) {
+func NewServer(options ...Option) (*Server, error) {
 	s := &Server{
 		scheme: "http",
 		host:   "localhost",
 		port:   "3000",
-		mux:    http.NewServeMux(), // default mux, no routes
 	}
 	s.IdleTimeout, s.ReadTimeout, s.WriteTimeout = 10*time.Second, 5*time.Second, 10*time.Second
 	s.MaxHeaderBytes = 1 << 20 // about 1MB
+
 	for _, option := range options {
 		if err := option(s); err != nil {
 			return nil, err
 		}
 	}
+	s.Addr = net.JoinHostPort(s.host, s.port)
+
+	s.Handler = s.RegisterRoutes()
+
 	return s, nil
 }
 
