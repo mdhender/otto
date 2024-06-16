@@ -29,7 +29,7 @@ func HelloForm() templ.Component {
 				templ_7745c5c3_Buffer = templ.GetBuffer()
 				defer templ.ReleaseBuffer(templ_7745c5c3_Buffer)
 			}
-			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("<form hx-post=\"/hello\" method=\"POST\" hx-target=\"#hello-container\"><input class=\"border\" id=\"name\" name=\"name\" type=\"text\"> <button type=\"submit\">Submit</button></form><div id=\"hello-container\"></div>")
+			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("<!-- slug --> <p class=\"mt-6 text-lg leading-8 text-gray-600 sm:max-w-md lg:max-w-none\">Generate maps with clicks and clicks and more clicks!</p><div class=\"mt-10 max-w-2xl\"><p class=\"mt-6 text-lg leading-8 text-gray-600 sm:max-w-md lg:max-w-none\">OttoMap converts your TribeNet turn reports to Worldographer maps. It's free and open source, and you can use it to create maps for any game. OttoMap comes in two flavors: a desktop server and a cloud server (coming soon).</p><p class=\"mt-6 text-lg leading-8 text-gray-600 sm:max-w-md lg:max-w-none\">You are using the desktop server. It is single-user version of the OttoMap web server. Everything runs on your computer; nothing is shared with other players.</p></div><form hx-post=\"/hello\" method=\"POST\" hx-target=\"#hello-container\"><input class=\"border\" id=\"name\" name=\"name\" type=\"text\"> <button type=\"submit\">Submit</button></form><div id=\"hello-container\"></div>")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
@@ -69,7 +69,7 @@ func HelloPost(name string) templ.Component {
 		var templ_7745c5c3_Var4 string
 		templ_7745c5c3_Var4, templ_7745c5c3_Err = templ.JoinStringErrs(name)
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `hello.templ`, Line: 14, Col: 19}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `frontend/hello.templ`, Line: 33, Col: 19}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var4))
 		if templ_7745c5c3_Err != nil {
