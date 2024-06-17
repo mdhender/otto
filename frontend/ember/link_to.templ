@@ -1,8 +1,30 @@
 package ember
 
+type LinkTo_t struct {
+    Id          string
+    Route       string
+    Class       string
+    AriaCurrent string
+    Role        string
+    TabIndex    string
+    Model string
+}
 
-templ LinkTo(route, class string) {
-<a href={templ.URL(route)} class={class}>
+templ LinkTo(this LinkTo_t) {
+<a  href={templ.URL(this.Route)}
+    class={this.Class}
+    if this.Role != "" {
+        role={this.Role}
+    }
+    if this.TabIndex != "" {
+        tabindex={this.TabIndex}
+    }
+    if this.Id != "" {
+        id={this.Id}
+    }
+    if this.AriaCurrent!= "" {
+        aria-current={this.AriaCurrent}
+    }>
     {children...}
 </a>
 }

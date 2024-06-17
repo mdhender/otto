@@ -1,0 +1,40 @@
+package frontend
+
+import "github.com/mdhender/otto/frontend/app"
+import "github.com/mdhender/otto/frontend/ember"
+
+templ TurnsPage() {
+    @app.Shell("turns") {
+        @app.Content("Turns", false) {
+            <ul role="list" class="grid grid-cols-1 gap-x-6 gap-y-8 lg:grid-cols-3 xl:gap-x-8">
+                <li class="overflow-hidden rounded-xl border border-gray-200">
+                    <div class="flex items-center gap-x-4 border-b border-gray-900/5 bg-gray-50 p-6">
+                        @ember.LinkTo(ember.LinkTo_t{
+                            Route: "/turn",
+                            Model: "turn",
+                        }) {
+                            <img src="https://tailwindui.com/img/logos/48x48/reform.svg" alt="Reform" class="h-12 w-12 flex-none rounded-lg bg-white object-cover ring-1 ring-gray-900/10" />
+                        }
+
+                        <div class="text-sm font-medium leading-6 text-gray-900">
+                            @ember.LinkTo(ember.LinkTo_t{
+                                Route: "/turn",
+                                Class: "font-medium text-indigo-600 hover:text-indigo-500",
+                                Model: "turn",
+                            }) { Turn turn.name }
+                        </div>
+                    </div>
+
+                    <dl class="-my-3 divide-y divide-gray-100 px-6 py-4 text-sm leading-6">
+                        <div class="flex justify-between gap-x-4 py-3">
+                            <dt class="text-gray-500">Turn Status</dt>
+                            <dd class="flex items-start gap-x-2">
+                                <div class="rounded-md bg-green-50 px-2 py-1 text-xs font-medium text-green-700 ring-1 ring-inset ring-green-600/20">Complete</div>
+                            </dd>
+                        </div>
+                    </dl>
+                </li>
+            </ul>
+        }
+    }
+}

@@ -1,0 +1,21 @@
+package app
+
+templ Shell(pageName string) {
+<!DOCTYPE html>
+<html class="h-full bg-gray-100" lang="en">
+<head>
+<meta charset="utf-8">
+<title>otto</title>
+<meta name="description" content="">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link integrity="" rel="stylesheet" href="/assets/css/tailwind.css">
+<script src="/assets/js/htmx-1.9.12.min.js"></script>
+</head>
+<body class="h-full">
+    <div class="min-h-full">
+        @NavBar(NavBar_t{PageName: pageName})
+        {children...}
+    </div>
+</body>
+</html>
+}
