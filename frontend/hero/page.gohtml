@@ -1,0 +1,18 @@
+<!DOCTYPE html>{{- /*gotype:github.com/mdhender/otto/frontend/hero.Page*/ -}}
+<html class="h-full bg-gray-100" lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>{{with .Title}}{{.}}{{else}}Default Page Title{{end}}</title>
+    <meta name="description" content="">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link integrity="" rel="stylesheet" href="/css/tailwind.css">
+    <script src="/js/htmx-1.9.12.min.js" defer></script>
+    <script src="/js/alpinejs-3.14.0.min.js" defer></script>
+</head>
+<body class="h-full">
+<div class="bg-white">
+    {{template "NavBar" .NavBar}}
+    {{template "content" .Content}}
+</div>
+</body>
+</html>
