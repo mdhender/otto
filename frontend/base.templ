@@ -1,5 +1,7 @@
 package frontend
 
+import "github.com/mdhender/otto/frontend/hero"
+
 templ Base() {
 <!DOCTYPE html>
 <html  class="h-full bg-gray-100" lang="en">
@@ -13,7 +15,7 @@ templ Base() {
   </head>
   <body class="h-full">
   <div class="bg-white">
-    @HeroShellNavBar(&HeroShellNavBar_t{PageName: "testing", IsHamburgerMenuOpen: false})
+    @hero.ShellNavBar(&hero.ShellNavBar_t{PageName: "testing", IsHamburgerMenuOpen: false})
     {children...}
   </div>
   </body>

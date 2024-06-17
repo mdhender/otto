@@ -1,0 +1,9 @@
+package ember
+
+
+templ LinkTo(route, class string) {
+<a href={templ.URL(route)} class={class}>
+    {children...}
+</a>
+}
+
