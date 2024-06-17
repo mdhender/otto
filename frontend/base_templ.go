@@ -23,7 +23,11 @@ func Base() templ.Component {
 			templ_7745c5c3_Var1 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
-		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("<!doctype html><html class=\"h-full bg-gray-100\" lang=\"en\"><head><meta charset=\"utf-8\"><title>otto</title><meta name=\"description\" content=\"\"><meta name=\"viewport\" content=\"width=device-width, initial-scale=1\"><link integrity=\"\" rel=\"stylesheet\" href=\"assets/css/tailwind.css\"><script src=\"assets/js/htmx-1.9.12.min.js\"></script></head><body class=\"h-full\">")
+		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("<!doctype html><html class=\"h-full bg-gray-100\" lang=\"en\"><head><meta charset=\"utf-8\"><title>otto</title><meta name=\"description\" content=\"\"><meta name=\"viewport\" content=\"width=device-width, initial-scale=1\"><link integrity=\"\" rel=\"stylesheet\" href=\"/assets/css/tailwind.css\"><script src=\"/assets/js/htmx-1.9.12.min.js\"></script></head><body class=\"h-full\"><div class=\"bg-white\">")
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
+		templ_7745c5c3_Err = HeroShellNavBar(&HeroShellNavBar_t{PageName: "testing", IsHamburgerMenuOpen: false}).Render(ctx, templ_7745c5c3_Buffer)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -31,7 +35,7 @@ func Base() templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("</body></html>")
+		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("</div></body></html>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}

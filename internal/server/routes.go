@@ -17,6 +17,8 @@ func (s *Server) RegisterRoutes() http.Handler {
 
 	fileServer := http.FileServer(http.FS(frontend.Files))
 	mux.Handle("/assets/", fileServer)
+	mux.Handle("/features", templ.Handler(frontend.FeaturesPage()))
+	mux.Handle("/landing", templ.Handler(frontend.LandingPage()))
 	mux.Handle("/web", templ.Handler(frontend.HelloForm()))
 	mux.HandleFunc("/hello", frontend.HelloWebHandler)
 
