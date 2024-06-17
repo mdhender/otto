@@ -21,8 +21,11 @@ type Server struct {
 	host   string
 	port   string
 	paths  struct {
-		public    string // path to public files
+		assets    string // path to public assets
 		templates string // path to template files
+	}
+	debug struct {
+		traceAssets bool // trace asset requests
 	}
 	db database.Service
 }
@@ -47,7 +50,12 @@ func NewServer(options ...Option) (*Server, error) {
 	}
 	s.Addr = net.JoinHostPort(s.host, s.port)
 
-	s.Handler = s.RegisterRoutes()
+	mux, err := s.RegisterRoutes()
+	if err != nil {
+		return nil, err
+	} else {
+		s.Handler = mux
+	}
 
 	return s, nil
 }
@@ -57,6 +65,22 @@ func (s *Server) BaseURL() string {
 }
 
 type Option func(*Server) error
+
+func WithAssets(path string) Option {
+	return func(s *Server) (err error) {
+		path, err = filepath.Abs(path)
+		if err != nil {
+			return err
+		}
+		if sb, err := os.Stat(path); err != nil {
+			return err
+		} else if !sb.IsDir() {
+			return errors.New("path is not a directory")
+		}
+		s.paths.assets = path
+		return nil
+	}
+}
 
 func WithHost(host string) Option {
 	return func(s *Server) (err error) {
@@ -70,22 +94,6 @@ func WithPort(port string) Option {
 	return func(s *Server) (err error) {
 		s.port = strings.TrimSpace(port)
 		s.Addr = net.JoinHostPort(s.host, s.port)
-		return nil
-	}
-}
-
-func WithPublic(path string) Option {
-	return func(s *Server) (err error) {
-		path, err = filepath.Abs(path)
-		if err != nil {
-			return err
-		}
-		if sb, err := os.Stat(path); err != nil {
-			return err
-		} else if !sb.IsDir() {
-			return errors.New("path is not a directory")
-		}
-		s.paths.public = path
 		return nil
 	}
 }

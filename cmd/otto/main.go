@@ -37,7 +37,13 @@ func main() {
 }
 
 func run() error {
-	app, err := server.NewServer()
+	var options []server.Option
+	options = append(options, server.WithHost("localhost"))
+	options = append(options, server.WithPort("3000"))
+	options = append(options, server.WithAssets("../frontend/assets"))
+	options = append(options, server.WithTemplates("../frontend"))
+
+	app, err := server.NewServer(options...)
 	if err != nil {
 		return fmt.Errorf("cannot create server: %w", err)
 	}
