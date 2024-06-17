@@ -20,6 +20,7 @@ func (s *Server) RegisterRoutes() http.Handler {
 	mux.Handle("/features", templ.Handler(frontend.FeaturesPage()))
 	mux.Handle("/landing", templ.Handler(frontend.LandingPage()))
 	mux.Handle("/turns", templ.Handler(frontend.TurnsPage()))
+	mux.Handle("/turn", templ.Handler(frontend.TurnPage()))
 	mux.Handle("/web", templ.Handler(frontend.HelloForm()))
 	mux.HandleFunc("/hello", frontend.HelloWebHandler)
 

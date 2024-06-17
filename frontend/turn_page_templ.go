@@ -13,7 +13,7 @@ import "bytes"
 import "github.com/mdhender/otto/frontend/app"
 import "github.com/mdhender/otto/frontend/ember"
 
-func TurnsPage() templ.Component {
+func TurnPage() templ.Component {
 	return templ.ComponentFunc(func(ctx context.Context, templ_7745c5c3_W io.Writer) (templ_7745c5c3_Err error) {
 		templ_7745c5c3_Buffer, templ_7745c5c3_IsBuffer := templ_7745c5c3_W.(*bytes.Buffer)
 		if !templ_7745c5c3_IsBuffer {
@@ -38,37 +38,11 @@ func TurnsPage() templ.Component {
 					templ_7745c5c3_Buffer = templ.GetBuffer()
 					defer templ.ReleaseBuffer(templ_7745c5c3_Buffer)
 				}
-				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("<ul role=\"list\" class=\"grid grid-cols-1 gap-x-6 gap-y-8 lg:grid-cols-3 xl:gap-x-8\"><li class=\"overflow-hidden rounded-xl border border-gray-200\"><div class=\"flex items-center gap-x-4 border-b border-gray-900/5 bg-gray-50 p-6\">")
+				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("<div><div class=\"px-4 sm:px-0\"><h3 class=\"text-base font-semibold leading-7 text-gray-900\">")
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err
 				}
 				templ_7745c5c3_Var4 := templ.ComponentFunc(func(ctx context.Context, templ_7745c5c3_W io.Writer) (templ_7745c5c3_Err error) {
-					templ_7745c5c3_Buffer, templ_7745c5c3_IsBuffer := templ_7745c5c3_W.(*bytes.Buffer)
-					if !templ_7745c5c3_IsBuffer {
-						templ_7745c5c3_Buffer = templ.GetBuffer()
-						defer templ.ReleaseBuffer(templ_7745c5c3_Buffer)
-					}
-					_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("<img src=\"/assets/images/reform-logo-48x48.svg\" alt=\"Reform\" class=\"h-12 w-12 flex-none rounded-lg bg-white object-cover ring-1 ring-gray-900/10\">")
-					if templ_7745c5c3_Err != nil {
-						return templ_7745c5c3_Err
-					}
-					if !templ_7745c5c3_IsBuffer {
-						_, templ_7745c5c3_Err = io.Copy(templ_7745c5c3_W, templ_7745c5c3_Buffer)
-					}
-					return templ_7745c5c3_Err
-				})
-				templ_7745c5c3_Err = ember.LinkTo(ember.LinkTo_t{
-					Route: "/turn",
-					Model: "turn",
-				}).Render(templ.WithChildren(ctx, templ_7745c5c3_Var4), templ_7745c5c3_Buffer)
-				if templ_7745c5c3_Err != nil {
-					return templ_7745c5c3_Err
-				}
-				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("<div class=\"text-sm font-medium leading-6 text-gray-900\">")
-				if templ_7745c5c3_Err != nil {
-					return templ_7745c5c3_Err
-				}
-				templ_7745c5c3_Var5 := templ.ComponentFunc(func(ctx context.Context, templ_7745c5c3_W io.Writer) (templ_7745c5c3_Err error) {
 					templ_7745c5c3_Buffer, templ_7745c5c3_IsBuffer := templ_7745c5c3_W.(*bytes.Buffer)
 					if !templ_7745c5c3_IsBuffer {
 						templ_7745c5c3_Buffer = templ.GetBuffer()
@@ -87,11 +61,11 @@ func TurnsPage() templ.Component {
 					Route: "/turn",
 					Class: "font-medium text-indigo-600 hover:text-indigo-500",
 					Model: "turn",
-				}).Render(templ.WithChildren(ctx, templ_7745c5c3_Var5), templ_7745c5c3_Buffer)
+				}).Render(templ.WithChildren(ctx, templ_7745c5c3_Var4), templ_7745c5c3_Buffer)
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err
 				}
-				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("</div></div><dl class=\"-my-3 divide-y divide-gray-100 px-6 py-4 text-sm leading-6\"><div class=\"flex justify-between gap-x-4 py-3\"><dt class=\"text-gray-500\">Turn Status</dt><dd class=\"flex items-start gap-x-2\"><div class=\"rounded-md bg-green-50 px-2 py-1 text-xs font-medium text-green-700 ring-1 ring-inset ring-green-600/20\">Complete</div></dd></div></dl></li></ul>")
+				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("</h3><p class=\"mt-1 max-w-2xl text-sm leading-6 text-gray-500\">Details and trivia about the turn.</p></div><div class=\"mt-6 border-t border-gray-100\"><dl class=\"divide-y divide-gray-100\"><div class=\"bg-white px-4 py-6 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-3\"><dt class=\"text-sm font-medium leading-6 text-gray-900\">Reports Data</dt><dd class=\"mt-1 text-sm leading-6 text-gray-700 sm:col-span-2 sm:mt-0\">Information on the reports used by this map.</dd></div><div class=\"bg-gray-50 px-4 py-6 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-3\"><dt class=\"text-sm font-medium leading-6 text-gray-900\">About</dt><dd class=\"mt-1 text-sm leading-6 text-gray-700 sm:col-span-2 sm:mt-0\">This section should contain information about the turn.<br><br>Fugiat ipsum ipsum deserunt culpa aute sint do nostrud anim incididunt cillum culpa consequat. Excepteur qui ipsum aliquip consequat sint. Sit id mollit nulla mollit nostrud in ea officia proident. Irure nostrud pariatur mollit ad adipisicing reprehenderit deserunt qui eu.</dd></div></dl></div></div>")
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err
 				}
@@ -100,7 +74,7 @@ func TurnsPage() templ.Component {
 				}
 				return templ_7745c5c3_Err
 			})
-			templ_7745c5c3_Err = app.Content("Turns", false).Render(templ.WithChildren(ctx, templ_7745c5c3_Var3), templ_7745c5c3_Buffer)
+			templ_7745c5c3_Err = app.Content("Turn", false).Render(templ.WithChildren(ctx, templ_7745c5c3_Var3), templ_7745c5c3_Buffer)
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
@@ -109,7 +83,7 @@ func TurnsPage() templ.Component {
 			}
 			return templ_7745c5c3_Err
 		})
-		templ_7745c5c3_Err = app.Shell("turns").Render(templ.WithChildren(ctx, templ_7745c5c3_Var2), templ_7745c5c3_Buffer)
+		templ_7745c5c3_Err = app.Shell("turn").Render(templ.WithChildren(ctx, templ_7745c5c3_Var2), templ_7745c5c3_Buffer)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
