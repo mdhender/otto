@@ -68,6 +68,7 @@ func run(assetsPath, templatesPath string) error {
 	serverCh := make(chan struct{})
 	go func() {
 		log.Printf("[server] serving %q\n", app.BaseURL())
+		log.Printf("[server] log in at %q\n", app.BaseURL()+"/user/login")
 		if err := app.ListenAndServe(); !errors.Is(err, http.ErrServerClosed) {
 			log.Fatalf("[server] exited with: %v", err)
 		}

@@ -30,6 +30,11 @@
             <a href="https://worldographer.com" class="text-sm font-semibold leading-6 text-gray-900">Worldographer</a>
             <a href="https://github.com/mdhender/otto" class="text-sm font-semibold leading-6 text-gray-900">GitHub</a>
         </div>
+        <!-- nav bar login -->
+        <div class="hidden lg:flex lg:flex-1 lg:justify-end"
+             x-data="{ path: '/' + 'l' + 'o' + 'g' + 'i' + 'n'}">
+            <a :href="path" class="text-sm font-semibold leading-6 text-gray-900">Log in <span aria-hidden="true">&rarr;</span></a>
+        </div>
     </nav>
 
     <!-- Mobile menu, show/hide based on menu open state. -->
@@ -54,12 +59,18 @@
             </div>
             <div class="mt-6 flow-root">
                 <div class="-my-6 divide-y divide-gray-500/10">
+                    <!-- mobile nav bar routes -->
                     <div class="space-y-2 py-6">
                         {{if not (eq .PageName "index")}}<a href="/" class="-mx-3 block rounded-lg px-3 py-2 text-base font-semibold leading-7 text-gray-900 hover:bg-gray-50">OttoMap</a>{{end}}
                         {{if not (eq .PageName "features")}}<a href="/features" class="-mx-3 block rounded-lg px-3 py-2 text-base font-semibold leading-7 text-gray-900 hover:bg-gray-50">Features</a>{{end}}
                         <a href="https://tribenet.wiki" class="-mx-3 block rounded-lg px-3 py-2 text-base font-semibold leading-7 text-gray-900 hover:bg-gray-50">TribeNet</a>
                         <a href="https://worldographer.com" class="-mx-3 block rounded-lg px-3 py-2 text-base font-semibold leading-7 text-gray-900 hover:bg-gray-50">Worldographer</a>
                         <a href="https://github.com/mdhender/otto" class="-mx-3 block rounded-lg px-3 py-2 text-base font-semibold leading-7 text-gray-900 hover:bg-gray-50">GitHub</a>
+                    </div>
+                    <!-- mobile nav bar login -->
+                    <div class="py-6"
+                         x-data="{ path: '/' + 'l' + 'o' + 'g' + 'i' + 'n'}">
+                        <a :href="path" class="-mx-3 block rounded-lg px-3 py-2.5 text-base font-semibold leading-7 text-gray-900 hover:bg-gray-50">Log in</a>
                     </div>
                 </div>
             </div>

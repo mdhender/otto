@@ -20,6 +20,8 @@ func (s *Server) RegisterRoutes() (http.Handler, error) {
 	mux.HandleFunc("GET /", getHeroPage(s.paths.templates))
 	mux.HandleFunc("GET /features", getFeaturesPage(s.paths.templates))
 	mux.HandleFunc("GET /health", s.healthHandler)
+	mux.HandleFunc("GET /login", getLoginPage(s.paths.templates))
+	mux.HandleFunc("POST /login", postLoginPage())
 
 	// walk the frontend assets directory and add routes to serve static files
 	validExtensions := map[string]bool{
@@ -159,6 +161,26 @@ func getHeroPage(templatesPath string) http.HandlerFunc {
 		payload.NavBar.PageName = "index"
 
 		render(w, r, payload, templateFiles...)
+	}
+}
+
+func getLoginPage(templatesPath string) http.HandlerFunc {
+	templateFiles := []string{
+		abstmpl(templatesPath, "authn", "page.gohtml"),
+	}
+
+	return func(w http.ResponseWriter, r *http.Request) {
+		log.Printf("%s: %s: entered\n", r.Method, r.URL.Path)
+
+		render(w, r, nil, templateFiles...)
+	}
+}
+
+func postLoginPage() http.HandlerFunc {
+	return func(w http.ResponseWriter, r *http.Request) {
+		log.Printf("%s: %s: entered\n", r.Method, r.URL.Path)
+
+		http.Redirect(w, r, "/", http.StatusSeeOther)
 	}
 }
 

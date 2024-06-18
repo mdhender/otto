@@ -57,3 +57,4 @@ Otto uses four tables to store turn reports in the database:
 2. `reports` - Stores the report metadata, including the user-facing identifier and timestamp.
 3. `reports_sections` - Stores metadata for section of the report, including the element header and any errors.
 4. `reports_lines` - Stores the individual lines of each section, along with any parsing errors.
+

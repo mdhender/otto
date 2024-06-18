@@ -2,7 +2,7 @@
 module.exports = {
   content: [
     "./frontend/**/*.html",
-    "./frontend/**/*.templ",
+    "./frontend/**/*.gohtml",
   ],
   theme: {
     extend: {},
