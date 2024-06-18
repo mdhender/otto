@@ -1,0 +1,60 @@
+https://www.digitalocean.com/community/tutorials/how-to-sandbox-processes-with-systemd-on-ubuntu-20-04
+
+# adduser ottosvc --shell /usr/sbin/nologin --home /var/www/ottosvc
+# gpasswd -d ottosvc users
+# mkdir -p /var/www/ottosvc
+# chown root:root /var/www/ottosvc
+# chmod 755 /var/www/ottosvc
+# cd /var/www/ottosvc
+# mkdir assets bin data template
+# chown ottosvc:ottosvc data
+
+## optional to allow user to install files
+# chown your_user:your_user /var/www/ottosvc
+
+## install the service files
+# vi /etc/systemd/system/otto.service
+
+[Unit]
+Description=Otto Web server
+StartLimitIntervalSec=0
+After=network-online.target
+
+[Service]
+Type=simple
+User=ottosvc
+Group=ottosvc
+PIDFile=/run/otto.pid
+WorkingDirectory=/var/www/ottosvc/data
+ExecStart=/var/www/ottosvc/bin/otto --cache-templates
+ExecReload=/bin/kill -USR1 $MAINPID
+Restart=on-failure
+RestartSec=1
+
+[Install]
+WantedBy=multi-user.target
+
+# systemctl status otto.service
+○ otto.service - Otto Web server
+     Loaded: loaded (/etc/systemd/system/otto.service; disabled; preset: enabled)
+     Active: inactive (dead)
+# systemctl enable otto.service
+Created symlink /etc/systemd/system/multi-user.target.wants/otto.service → /etc/systemd/system/otto.service.
+
+# systemctl start otto.service
+
+# systemctl status otto.service
+● otto.service - Otto Web server
+     Loaded: loaded (/etc/systemd/system/otto.service; enabled; preset: enabled)
+     Active: active (running) since Mon 2024-04-15 15:29:36 UTC; 5min ago
+   Main PID: 12252 (otto)
+      Tasks: 3 (limit: 1100)
+     Memory: 2.0M
+        CPU: 13ms
+     CGroup: /system.slice/otto.service
+             └─12252 /var/www/ottosvc/bin/otto --cache-templates
+
+Apr 15 15:29:36 otto systemd[1]: Started otto.service - Otto Web server.
+Apr 15 15:29:36 otto otto[12252]: 2024/04/15 15:29:36 [mdb] otto.mdb: loaded
+
+# journalctl -f -u otto.service
