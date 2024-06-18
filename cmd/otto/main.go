@@ -3,20 +3,36 @@ package main
 import (
 	"context"
 	"errors"
+	"flag"
 	"fmt"
 	"github.com/inconshreveable/mousetrap"
 	"github.com/mdhender/otto/internal/server"
+	"github.com/peterbourgon/ff/v3"
 	"log"
 	"net/http"
 	"os"
 	"os/signal"
+	"path/filepath"
 	"runtime/debug"
 	"syscall"
 	"time"
 )
 
 func main() {
-	var err error
+	fs := flag.NewFlagSet("otto", flag.ExitOnError)
+
+	assetsPath := filepath.Join("..", "frontend", "assets")
+	fs.StringVar(&assetsPath, "assets", assetsPath, "override assets path")
+
+	templatesPath := filepath.Join("..", "frontend")
+	fs.StringVar(&templatesPath, "templates", templatesPath, "override templates path")
+
+	err := ff.Parse(fs, os.Args[1:], ff.WithEnvVarPrefix("FH"), ff.WithConfigFileFlag("config"), ff.WithConfigFileParser(ff.JSONParser))
+	if err != nil {
+		log.Printf("error: %v\n", err)
+		os.Exit(2)
+	}
+
 	defer func() {
 		exitStatus := 0
 		if r := recover(); r != nil {
@@ -30,18 +46,18 @@ func main() {
 		os.Exit(exitStatus)
 	}()
 
-	err = run()
+	err = run(assetsPath, templatesPath)
 	if err != nil {
 		log.Printf("error: %v\n", err)
 	}
 }
 
-func run() error {
+func run(assetsPath, templatesPath string) error {
 	var options []server.Option
 	options = append(options, server.WithHost("localhost"))
 	options = append(options, server.WithPort("3000"))
-	options = append(options, server.WithAssets("../frontend/assets"))
-	options = append(options, server.WithTemplates("../frontend"))
+	options = append(options, server.WithAssets(assetsPath))
+	options = append(options, server.WithTemplates(templatesPath))
 
 	app, err := server.NewServer(options...)
 	if err != nil {

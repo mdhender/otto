@@ -5,6 +5,8 @@ go 1.22.4
 require (
 	github.com/inconshreveable/mousetrap v1.1.0
 	github.com/joho/godotenv v1.5.1
+	github.com/mitchellh/go-homedir v1.1.0
+	github.com/peterbourgon/ff/v3 v3.4.0
 	modernc.org/sqlite v1.30.0
 )
 

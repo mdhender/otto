@@ -27,7 +27,8 @@ type Server struct {
 	debug struct {
 		traceAssets bool // trace asset requests
 	}
-	db database.Service
+	db         database.Service
+	fileServer http.Handler
 }
 
 func NewServer(options ...Option) (*Server, error) {
@@ -44,6 +45,9 @@ func NewServer(options ...Option) (*Server, error) {
 			return nil, err
 		}
 	}
+
+	log.Printf("server: assets    %q\n", s.paths.assets)
+	log.Printf("server: templates %q\n", s.paths.templates)
 
 	if s.host == "" && s.port == "" {
 		return nil, errors.New("host and port cannot both be empty")
