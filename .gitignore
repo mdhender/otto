@@ -6,6 +6,7 @@
 *.out
 *.pdf
 *.so
+*.sqlite
 *.swp
 *.tar
 *.test
