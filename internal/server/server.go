@@ -46,8 +46,8 @@ func NewServer(options ...Option) (*Server, error) {
 		}
 	}
 
-	log.Printf("server: assets    %q\n", s.paths.assets)
-	log.Printf("server: templates %q\n", s.paths.templates)
+	log.Printf("[server] assets    %q\n", s.paths.assets)
+	log.Printf("[server] templates %q\n", s.paths.templates)
 
 	if s.host == "" && s.port == "" {
 		return nil, errors.New("host and port cannot both be empty")

@@ -9,5 +9,5 @@ INSERT INTO paths (name, path)
 VALUES ('templates', 'templates');
 
 INSERT INTO users (handle, hashed_password, clan, magic, enabled)
-VALUES ('otto', '$', '0000', '$', 'Y');
+VALUES ('otto', '', '0000', '', 'Y');
 

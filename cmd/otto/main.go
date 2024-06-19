@@ -69,9 +69,9 @@ func main() {
 		os.Exit(2)
 	}
 
-	log.Printf("assetsPath   : %q\n", assetsPath)
-	log.Printf("databasePath : %q\n", databasePath)
-	log.Printf("templatesPath: %q\n", templatesPath)
+	//log.Printf("assetsPath   : %q\n", assetsPath)
+	//log.Printf("databasePath : %q\n", databasePath)
+	//log.Printf("templatesPath: %q\n", templatesPath)
 
 	// ugh. setting up the database here feels so wrong.
 	if databasePath == "" {
@@ -85,20 +85,17 @@ func main() {
 		log.Fatalf("error: %s: is not a directory\n", databasePath)
 	} else if !sb.IsDir() {
 		log.Fatalf("error: %s: is not a directory\n", databasePath)
-	}
-	log.Printf("databasePath : %q\n", databasePath)
-	if path, err := filepath.Abs(filepath.Join(databasePath, "otto.sqlite")); err != nil {
+	} else if path, err := filepath.Abs(databasePath); err != nil {
 		log.Fatalf("error: %s: cannot determine absolute path: %v\n", databasePath, err)
 	} else {
-		databasePath = path
+		databasePath = filepath.Join(path, "otto.sqlite")
 	}
-	log.Printf("databaseName : %q\n", databasePath)
+
 	if err = sqlc.CreateDatabase(databasePath); err != nil {
 		log.Fatalf("error: %v\n", err)
 	} else if err = sqlc.MigrateSchema(databasePath); err != nil {
 		log.Fatalf("error: %v\n", err)
 	}
-	log.Printf("database: %s: seems migrated\n", databasePath)
 
 	err = run(databasePath, assetsPath, templatesPath)
 	if err != nil {

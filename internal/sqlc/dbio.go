@@ -9,6 +9,8 @@ import (
 	_ "embed"
 	"errors"
 	"fmt"
+	"github.com/google/uuid"
+	"github.com/mdhender/otto/internal/authn"
 	"log"
 	_ "modernc.org/sqlite"
 	"os"
@@ -99,7 +101,7 @@ func MigrateSchema(path string) error {
 		}
 	}
 	sort.Strings(allMigrations)
-	log.Printf("all migrations: %v\n", allMigrations)
+	//log.Printf("all migrations: %v\n", allMigrations)
 
 	// gather the list of migrations that have already been applied
 	appliedMigrations := map[string]bool{}
@@ -119,7 +121,7 @@ func MigrateSchema(path string) error {
 			appliedMigrations[id] = true
 		}
 	}
-	log.Printf("applied migrations: %v\n", appliedMigrations)
+	//log.Printf("applied migrations: %v\n", appliedMigrations)
 
 	// loop through the migrations, applying them in order.
 	for _, migrationSql := range allMigrations {
@@ -153,7 +155,7 @@ func MigrateSchema(path string) error {
 	found := false
 	for _, migrationSql := range allMigrations {
 		id := strings.TrimSuffix(migrationSql, ".sql")
-		log.Printf("sanity checking migration: %s\n", id)
+		//log.Printf("sanity checking migration: %s\n", id)
 		if !appliedMigrations[id] {
 			log.Printf("unapplied migration: %s\n", migrationSql)
 			found = true
@@ -163,29 +165,24 @@ func MigrateSchema(path string) error {
 		return ErrUnappliedMigrations
 	}
 
-	//metadataRows, err := q.FetchSchemaMetadata(ctx)
-	//if err != nil {
-	//	return err
-	//} else if len(metadataRows) != 1 {
-	//	return ErrInvalidSchemaMetadata
-	//} else if metadataRows[0].Version != expectedSchemaVersion {
-	//	return ErrInvalidSchemaMetadata
-	//}
-	//
-	//// if otto does not have a magic key or password, then create one.
-	//otto, err := q.FetchUser(ctx, "otto")
-	//if err != nil {
-	//	return errors.Join(ErrFetchOtto, err)
-	//}
-	//if otto.Magic == "" {
-	//	otto.Magic = uuid.New().String()
-	//	if err = q.UpdateOttoMagic(ctx, otto.Magic); err != nil {
-	//		return err
-	//	}
-	//	if err = q.UpSetUserMagic(ctx, "otto", "otto"); err != nil {
-	//		return errors.Join(ErrSetOttoMagic, err)
-	//	}
-	//}
+	// and finally, enforce the otto magic key and password.
+	needsMagic := false
+	if rows, err := db.Query("SELECT magic FROM users WHERE handle = 'otto' AND (magic = '' OR hashed_password = '')"); err != nil {
+		return err
+	} else {
+		needsMagic = rows.Next()
+		_ = rows.Close()
+	}
+	if needsMagic {
+		magic := uuid.New().String()
+		// use bcrypt to hash the secret (from gregorygaines.com)
+		hashedPassword, err := authn.HashPassword(magic)
+		if err != nil {
+			log.Fatalf("error: otto: magic: %v\n", err)
+		} else if _, err = db.Exec("UPDATE users SET magic =?, hashed_password =? WHERE handle = 'otto'", magic, hashedPassword); err != nil {
+			log.Fatalf("error: otto: magic: %v\n", err)
+		}
+	}
 
 	return nil
 }
