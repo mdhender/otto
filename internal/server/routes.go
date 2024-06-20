@@ -4,6 +4,7 @@ import (
 	"bytes"
 	"crypto/sha256"
 	"encoding/json"
+	"github.com/mdhender/otto/frontend/admin"
 	"github.com/mdhender/otto/frontend/authn"
 	"github.com/mdhender/otto/frontend/hero"
 	"html/template"
@@ -20,6 +21,7 @@ func (s *Server) RegisterRoutes() (http.Handler, error) {
 	mux := http.NewServeMux()
 
 	mux.HandleFunc("GET /", getHeroPage(s.paths.templates))
+	mux.HandleFunc("GET /admin", getAdminShell(s.paths.templates))
 	mux.HandleFunc("GET /features", getFeaturesPage(s.paths.templates))
 	mux.HandleFunc("GET /health", s.healthHandler)
 	mux.HandleFunc("GET /login", getLoginPage(s.paths.templates, s.dev.mode, "otto", s.dev.password))
@@ -89,6 +91,21 @@ func (s *Server) healthHandler(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
 	w.WriteHeader(http.StatusOK)
 	_, _ = w.Write(jsonResp)
+}
+
+func getAdminShell(templatesPath string) http.HandlerFunc {
+	templateFiles := []string{
+		abstmpl(templatesPath, "admin", "shell.gohtml"),
+	}
+
+	return func(w http.ResponseWriter, r *http.Request) {
+		log.Printf("%s: %s: entered\n", r.Method, r.URL.Path)
+
+		var payload admin.Shell
+		payload.Content = admin.Blank{}
+
+		render(w, r, payload, templateFiles...)
+	}
 }
 
 // returns a handler that will serve an asset if it exists, otherwise return not found.
