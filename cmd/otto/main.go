@@ -57,10 +57,9 @@ func main() {
 	var databasePath string
 	fs.StringVar(&databasePath, "db", databasePath, "path for database files")
 
-	dev := false
+	dev, devRebuild, devMagic, devHandle, devPassword := false, false, "95660abc-8ea6-4e42-82a3-0e791e2c49cc", "otto", ""
 	fs.BoolVar(&dev, "dev", dev, "run in development mode")
-
-	devMagic, devHandle, devPassword := "95660abc-8ea6-4e42-82a3-0e791e2c49cc", "otto", ""
+	fs.BoolVar(&devRebuild, "dev-rebuild", dev, "rebuild the database")
 	fs.StringVar(&devPassword, "dev-password", devPassword, "password for development")
 
 	assetsPath := filepath.Join("..", "frontend", "assets")
@@ -103,6 +102,15 @@ func main() {
 		log.Fatalf("error: %s: cannot determine absolute path: %v\n", databasePath, err)
 	} else {
 		databasePath = filepath.Join(path, "otto.sqlite")
+	}
+
+	if dev && devRebuild {
+		if _, err := os.Stat(databasePath); err == nil {
+			log.Printf("warning: dev-rebuild: rebuilding database!\n")
+			if err = os.Remove(databasePath); err != nil {
+				log.Fatalf("error: dev-rebuild: %v\n", err)
+			}
+		}
 	}
 
 	if err = sqlc.CreateDatabase(databasePath); err != nil {
@@ -157,6 +165,7 @@ func run(databasePath, assetsPath, templatesPath string, dev bool, devMagic, dev
 	go func() {
 		log.Printf("[server] serving %s\n", app.BaseURL())
 		log.Printf("[server] log in at %s/login\n", app.BaseURL())
+		log.Printf("[server] sign up at %s%s\n", app.BaseURL(), app.MagicLink())
 		if err := app.ListenAndServe(); !errors.Is(err, http.ErrServerClosed) {
 			log.Fatalf("[server] exited with: %v", err)
 		}

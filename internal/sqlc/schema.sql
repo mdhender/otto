@@ -1,12 +1,22 @@
 -- foreign keys must be disabled to drop tables with foreign keys
 PRAGMA foreign_keys = OFF;
 
+DROP TABLE IF EXISTS magic_links;
 DROP TABLE IF EXISTS migrations;
 DROP TABLE IF EXISTS paths;
 DROP TABLE IF EXISTS users;
 
 -- foreign keys must be enabled with every database connection
 PRAGMA foreign_keys = ON;
+
+CREATE TABLE magic_links
+(
+    link   TEXT      NOT NULL,
+    handle TEXT      NOT NULL,
+    crdttm TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    PRIMARY KEY (link),
+    UNIQUE (handle)
+);
 
 -- paths to files needed by the server
 CREATE TABLE paths

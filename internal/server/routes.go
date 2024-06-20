@@ -2,6 +2,7 @@ package server
 
 import (
 	"bytes"
+	"crypto/sha256"
 	"encoding/json"
 	"github.com/mdhender/otto/frontend/authn"
 	"github.com/mdhender/otto/frontend/hero"
@@ -23,6 +24,8 @@ func (s *Server) RegisterRoutes() (http.Handler, error) {
 	mux.HandleFunc("GET /health", s.healthHandler)
 	mux.HandleFunc("GET /login", getLoginPage(s.paths.templates, s.dev.mode, "otto", s.dev.password))
 	mux.HandleFunc("POST /login", postLoginPage())
+	mux.HandleFunc("GET /sign-up/{inviteId}", getInvitePage(s.paths.templates, s.magic.handle, s.magic.link))
+	mux.HandleFunc("POST /sign-up/{inviteId}", postInvitePage(s.magic.handle, s.magic.link))
 
 	// walk the frontend assets directory and add routes to serve static files
 	validExtensions := map[string]bool{
@@ -168,15 +171,18 @@ func getHeroPage(templatesPath string) http.HandlerFunc {
 func getLoginPage(templatesPath string, devMode bool, handle, password string) http.HandlerFunc {
 	templateFiles := []string{
 		abstmpl(templatesPath, "authn", "page.gohtml"),
+		abstmpl(templatesPath, "authn", "login.gohtml"),
 	}
 
 	var payload authn.Page
 	payload.Title = "Otto * Login"
 	if devMode {
 		log.Printf("warning: getLoginPage: dev mode enabled!\n")
-		payload.Content.DevMode = true
-		payload.Content.Handle = handle
-		payload.Content.Password = password
+		payload.Content = authn.Login{
+			DevMode:  true,
+			Handle:   handle,
+			Password: password,
+		}
 	}
 
 	return func(w http.ResponseWriter, r *http.Request) {
@@ -189,6 +195,72 @@ func getLoginPage(templatesPath string, devMode bool, handle, password string) h
 func postLoginPage() http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		log.Printf("%s: %s: entered\n", r.Method, r.URL.Path)
+
+		http.Redirect(w, r, "/", http.StatusSeeOther)
+	}
+}
+
+func getInvitePage(templatesPath string, magicHandle, magicInviteId string) http.HandlerFunc {
+	log.Printf("[server] getInvitePage: handle %q: invite %q\n", magicHandle, magicInviteId)
+	inviteClosed := []string{
+		abstmpl(templatesPath, "authn", "page.gohtml"),
+		abstmpl(templatesPath, "authn", "signup_closed.gohtml"),
+	}
+	h := sha256.New()
+	h.Write([]byte(magicInviteId))
+	inviteHash := h.Sum(nil)
+
+	inviteOpen := []string{
+		abstmpl(templatesPath, "authn", "page.gohtml"),
+		abstmpl(templatesPath, "authn", "signup.gohtml"),
+	}
+
+	return func(w http.ResponseWriter, r *http.Request) {
+		log.Printf("%s: %s: entered\n", r.Method, r.URL.Path)
+		inviteId, validInvite := r.PathValue("inviteId"), false
+		if inviteId != "" {
+			h := sha256.New()
+			h.Write([]byte(inviteId))
+			validInvite = bytes.Equal(h.Sum(nil), inviteHash)
+		}
+		if !validInvite {
+			var payload authn.Page
+			payload.Title = "Otto * Sign Up"
+			render(w, r, payload, inviteClosed...)
+			return
+		}
+
+		var payload authn.Page
+		payload.Title = "Otto * Sign Up"
+		payload.Content = authn.SignUp{
+			InviteLink: r.URL.Path,
+			Handle:     magicHandle,
+			Password:   magicInviteId,
+		}
+
+		render(w, r, payload, inviteOpen...)
+	}
+}
+
+func postInvitePage(magicHandle, magicInviteId string) http.HandlerFunc {
+	h := sha256.New()
+	h.Write([]byte(magicInviteId))
+	inviteHash := h.Sum(nil)
+
+	return func(w http.ResponseWriter, r *http.Request) {
+		log.Printf("%s: %s: entered\n", r.Method, r.URL.Path)
+		inviteId := r.PathValue("inviteId")
+		if inviteId == "" {
+			http.Error(w, http.StatusText(http.StatusBadRequest), http.StatusBadRequest)
+			return
+		} else {
+			h := sha256.New()
+			h.Write([]byte(inviteId))
+			if !bytes.Equal(h.Sum(nil), inviteHash) {
+				http.Error(w, http.StatusText(http.StatusUnauthorized), http.StatusUnauthorized)
+				return
+			}
+		}
 
 		http.Redirect(w, r, "/", http.StatusSeeOther)
 	}

@@ -4,9 +4,17 @@ package authn
 
 type Page struct {
 	Title   string
-	Content struct {
-		DevMode  bool
-		Handle   string
-		Password string
-	}
+	Content any
+}
+
+type Login struct {
+	DevMode  bool
+	Handle   string
+	Password string
+}
+
+type SignUp struct {
+	InviteLink string
+	Handle     string
+	Password   string
 }

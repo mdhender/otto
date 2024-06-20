@@ -3,6 +3,7 @@ package server
 import (
 	"errors"
 	"fmt"
+	"github.com/google/uuid"
 	_ "github.com/joho/godotenv/autoload"
 	"github.com/mdhender/otto/internal/database"
 	"log"
@@ -34,6 +35,10 @@ type Server struct {
 		password string
 	}
 	fileServer http.Handler
+	magic      struct {
+		link   string
+		handle string
+	}
 }
 
 func NewServer(options ...Option) (*Server, error) {
@@ -44,6 +49,7 @@ func NewServer(options ...Option) (*Server, error) {
 	}
 	s.IdleTimeout, s.ReadTimeout, s.WriteTimeout = 10*time.Second, 5*time.Second, 10*time.Second
 	s.MaxHeaderBytes = 1 << 20 // about 1MB
+	s.magic.link, s.magic.handle = uuid.New().String(), "otto"
 
 	for _, option := range options {
 		if err := option(s); err != nil {
@@ -71,6 +77,10 @@ func NewServer(options ...Option) (*Server, error) {
 
 func (s *Server) BaseURL() string {
 	return fmt.Sprintf("%s://%s", s.scheme, s.Addr)
+}
+
+func (s *Server) MagicLink() string {
+	return fmt.Sprintf("/sign-up/%s", s.magic.link)
 }
 
 type Option func(*Server) error
