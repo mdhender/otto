@@ -27,7 +27,12 @@ type Server struct {
 	debug struct {
 		traceAssets bool // trace asset requests
 	}
-	db         database.Service
+	db  database.Service
+	dev struct {
+		mode     bool
+		magic    string
+		password string
+	}
 	fileServer http.Handler
 }
 
@@ -82,6 +87,25 @@ func WithAssets(path string) Option {
 			return errors.New("path is not a directory")
 		}
 		s.paths.assets = path
+		return nil
+	}
+}
+
+func WithDevMode(magic, handle, password string) Option {
+	return func(s *Server) (err error) {
+		if magic == "" {
+			return fmt.Errorf("magic is required in development mode")
+		} else if strings.TrimSpace(magic) != magic {
+			return fmt.Errorf("magic cannot contain whitespace")
+		}
+		if password == "" {
+			return fmt.Errorf("password is required in development mode")
+		} else if strings.TrimSpace(password) != password {
+			return fmt.Errorf("password cannot contain whitespace")
+		}
+		s.dev.mode = true
+		s.dev.magic = magic
+		s.dev.password = password
 		return nil
 	}
 }

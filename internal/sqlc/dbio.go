@@ -75,6 +75,31 @@ func CreateDatabase(path string) error {
 	return db.Close()
 }
 
+func DevSchema(path, magic, handle, password string) error {
+	db, err := OpenDatabase(path)
+	if err != nil {
+		return err
+	}
+	defer func() {
+		_ = db.Close()
+	}()
+
+	// use bcrypt to hash the secret (from gregorygaines.com)
+	hashedPassword, err := authn.HashPassword(password)
+	if err != nil {
+		log.Fatalf("error: otto: magic: %v\n", err)
+	}
+
+	if _, err = db.Exec("UPDATE users SET magic =?, hashed_password =? WHERE handle = 'otto'", magic, hashedPassword); err != nil {
+		log.Fatalf("error: otto: magic: %v\n", err)
+	}
+
+	log.Printf("dev: otto: magic    %q\n", magic)
+	log.Printf("dev: otto: password %q\n", password)
+
+	return nil
+}
+
 // MigrateSchema applies missing migrations to the database.
 // It returns an error if any of the migration scripts fail.
 func MigrateSchema(path string) error {

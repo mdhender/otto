@@ -3,6 +3,7 @@ package server
 import (
 	"bytes"
 	"encoding/json"
+	"github.com/mdhender/otto/frontend/authn"
 	"github.com/mdhender/otto/frontend/hero"
 	"html/template"
 	"io"
@@ -20,7 +21,7 @@ func (s *Server) RegisterRoutes() (http.Handler, error) {
 	mux.HandleFunc("GET /", getHeroPage(s.paths.templates))
 	mux.HandleFunc("GET /features", getFeaturesPage(s.paths.templates))
 	mux.HandleFunc("GET /health", s.healthHandler)
-	mux.HandleFunc("GET /login", getLoginPage(s.paths.templates))
+	mux.HandleFunc("GET /login", getLoginPage(s.paths.templates, s.dev.mode, "otto", s.dev.password))
 	mux.HandleFunc("POST /login", postLoginPage())
 
 	// walk the frontend assets directory and add routes to serve static files
@@ -164,15 +165,24 @@ func getHeroPage(templatesPath string) http.HandlerFunc {
 	}
 }
 
-func getLoginPage(templatesPath string) http.HandlerFunc {
+func getLoginPage(templatesPath string, devMode bool, handle, password string) http.HandlerFunc {
 	templateFiles := []string{
 		abstmpl(templatesPath, "authn", "page.gohtml"),
+	}
+
+	var payload authn.Page
+	payload.Title = "Otto * Login"
+	if devMode {
+		log.Printf("warning: getLoginPage: dev mode enabled!\n")
+		payload.Content.DevMode = true
+		payload.Content.Handle = handle
+		payload.Content.Password = password
 	}
 
 	return func(w http.ResponseWriter, r *http.Request) {
 		log.Printf("%s: %s: entered\n", r.Method, r.URL.Path)
 
-		render(w, r, nil, templateFiles...)
+		render(w, r, payload, templateFiles...)
 	}
 }
 

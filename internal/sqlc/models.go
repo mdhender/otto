@@ -4,10 +4,18 @@
 
 package sqlc
 
-type Metadatum struct {
-	Version       string
-	AssetsPath    string
-	TemplatesPath string
+import (
+	"time"
+)
+
+type Migration struct {
+	ID     string
+	Crdttm time.Time
+}
+
+type Path struct {
+	Name string
+	Path string
 }
 
 type User struct {

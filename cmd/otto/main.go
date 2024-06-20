@@ -57,6 +57,12 @@ func main() {
 	var databasePath string
 	fs.StringVar(&databasePath, "db", databasePath, "path for database files")
 
+	dev := false
+	fs.BoolVar(&dev, "dev", dev, "run in development mode")
+
+	devMagic, devHandle, devPassword := "95660abc-8ea6-4e42-82a3-0e791e2c49cc", "otto", ""
+	fs.StringVar(&devPassword, "dev-password", devPassword, "password for development")
+
 	assetsPath := filepath.Join("..", "frontend", "assets")
 	fs.StringVar(&assetsPath, "assets", assetsPath, "override assets path")
 
@@ -72,6 +78,14 @@ func main() {
 	//log.Printf("assetsPath   : %q\n", assetsPath)
 	//log.Printf("databasePath : %q\n", databasePath)
 	//log.Printf("templatesPath: %q\n", templatesPath)
+
+	if dev && devPassword == "" {
+		log.Fatalf("error: dev-password is required in development mode\n")
+	} else if dev && strings.TrimSpace(devPassword) != devPassword {
+		log.Fatalf("error: dev-password cannot contain whitespace\n")
+	} else if !dev && devPassword != "" {
+		log.Fatalf("error: password is not accepted in production mode\n")
+	}
 
 	// ugh. setting up the database here feels so wrong.
 	if databasePath == "" {
@@ -96,14 +110,19 @@ func main() {
 	} else if err = sqlc.MigrateSchema(databasePath); err != nil {
 		log.Fatalf("error: %v\n", err)
 	}
+	if dev {
+		if err = sqlc.DevSchema(databasePath, devMagic, "otto", devPassword); err != nil {
+			log.Fatalf("error: %v\n", err)
+		}
+	}
 
-	err = run(databasePath, assetsPath, templatesPath)
+	err = run(databasePath, assetsPath, templatesPath, dev, devMagic, devHandle, devPassword)
 	if err != nil {
 		log.Fatalf("error: %v\n", err)
 	}
 }
 
-func run(databasePath, assetsPath, templatesPath string) error {
+func run(databasePath, assetsPath, templatesPath string, dev bool, devMagic, devHandle, devPassword string) error {
 	// ugh. setting up the database here feels so wrong.
 	if databasePath == "" {
 		return fmt.Errorf("database path is required")
@@ -120,6 +139,9 @@ func run(databasePath, assetsPath, templatesPath string) error {
 	}
 
 	var options []server.Option
+	if dev {
+		options = append(options, server.WithDevMode(devMagic, devHandle, devPassword))
+	}
 	options = append(options, server.WithHost("localhost"))
 	options = append(options, server.WithPort("3000"))
 	options = append(options, server.WithAssets(assetsPath))
@@ -133,8 +155,8 @@ func run(databasePath, assetsPath, templatesPath string) error {
 	// set up stuff so that we can gracefully shut down the server and application
 	serverCh := make(chan struct{})
 	go func() {
-		log.Printf("[server] serving %q\n", app.BaseURL())
-		log.Printf("[server] log in at %q\n", app.BaseURL()+"/user/login")
+		log.Printf("[server] serving %s\n", app.BaseURL())
+		log.Printf("[server] log in at %s/login\n", app.BaseURL())
 		if err := app.ListenAndServe(); !errors.Is(err, http.ErrServerClosed) {
 			log.Fatalf("[server] exited with: %v", err)
 		}

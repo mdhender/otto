@@ -1,20 +1,14 @@
--- name: FetchSchemaMetadata :many
-SELECT version, assets_path, templates_path
-FROM metadata;
-
 -- name: UpdateOttoMagic :exec
 UPDATE users
 SET magic = ?1
 WHERE id = 1
-  AND handle = 'otto'
-  AND clan = '0000';
+  AND handle = 'otto';
 
 -- name: UpdateOttoPassword :exec
 UPDATE users
 SET hashed_password = ?1
 WHERE id = 1
-  AND handle = 'otto'
-  AND clan = '0000';
+  AND handle = 'otto';
 
 -- name: CreateUser :one
 INSERT INTO users (handle, hashed_password, clan, magic, enabled)

@@ -47,34 +47,6 @@ func (q *Queries) DeleteUser(ctx context.Context, id int64) error {
 	return err
 }
 
-const fetchSchemaMetadata = `-- name: FetchSchemaMetadata :many
-SELECT version, assets_path, templates_path
-FROM metadata
-`
-
-func (q *Queries) FetchSchemaMetadata(ctx context.Context) ([]Metadatum, error) {
-	rows, err := q.db.QueryContext(ctx, fetchSchemaMetadata)
-	if err != nil {
-		return nil, err
-	}
-	defer rows.Close()
-	var items []Metadatum
-	for rows.Next() {
-		var i Metadatum
-		if err := rows.Scan(&i.Version, &i.AssetsPath, &i.TemplatesPath); err != nil {
-			return nil, err
-		}
-		items = append(items, i)
-	}
-	if err := rows.Close(); err != nil {
-		return nil, err
-	}
-	if err := rows.Err(); err != nil {
-		return nil, err
-	}
-	return items, nil
-}
-
 const fetchUser = `-- name: FetchUser :one
 SELECT id, hashed_password, clan, magic, enabled
 FROM users
@@ -107,7 +79,6 @@ UPDATE users
 SET magic = ?1
 WHERE id = 1
   AND handle = 'otto'
-  AND clan = '0000'
 `
 
 func (q *Queries) UpdateOttoMagic(ctx context.Context, magic string) error {
@@ -120,7 +91,6 @@ UPDATE users
 SET hashed_password = ?1
 WHERE id = 1
   AND handle = 'otto'
-  AND clan = '0000'
 `
 
 func (q *Queries) UpdateOttoPassword(ctx context.Context, hashedPassword string) error {
