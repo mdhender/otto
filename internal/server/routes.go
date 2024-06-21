@@ -22,6 +22,7 @@ func (s *Server) RegisterRoutes() (http.Handler, error) {
 
 	mux.HandleFunc("GET /", getHeroPage(s.paths.templates))
 	mux.HandleFunc("GET /admin", getAdminShell(s.paths.templates))
+	mux.HandleFunc("GET /admin/settings", getAdminSettings(s.paths.templates))
 	mux.HandleFunc("GET /features", getFeaturesPage(s.paths.templates))
 	mux.HandleFunc("GET /health", s.healthHandler)
 	mux.HandleFunc("GET /login", getLoginPage(s.paths.templates, s.dev.mode, "otto", s.dev.password))
@@ -96,6 +97,31 @@ func (s *Server) healthHandler(w http.ResponseWriter, r *http.Request) {
 func getAdminShell(templatesPath string) http.HandlerFunc {
 	templateFiles := []string{
 		abstmpl(templatesPath, "admin", "shell.gohtml"),
+		abstmpl(templatesPath, "admin", "desktop_sidebar_static.gohtml"),
+		abstmpl(templatesPath, "admin", "mobile_menu_off_canvas.gohtml"),
+		abstmpl(templatesPath, "admin", "nav_bar_secondary.gohtml"),
+		abstmpl(templatesPath, "admin", "search_header_sticky.gohtml"),
+		abstmpl(templatesPath, "admin", "account_settings.gohtml"),
+	}
+
+	return func(w http.ResponseWriter, r *http.Request) {
+		log.Printf("%s: %s: entered\n", r.Method, r.URL.Path)
+
+		var payload admin.Shell
+		payload.Content = admin.Blank{}
+
+		render(w, r, payload, templateFiles...)
+	}
+}
+
+func getAdminSettings(templatesPath string) http.HandlerFunc {
+	templateFiles := []string{
+		abstmpl(templatesPath, "admin", "shell.gohtml"),
+		abstmpl(templatesPath, "admin", "desktop_sidebar_static.gohtml"),
+		abstmpl(templatesPath, "admin", "mobile_menu_off_canvas.gohtml"),
+		abstmpl(templatesPath, "admin", "nav_bar_secondary.gohtml"),
+		abstmpl(templatesPath, "admin", "search_header_sticky.gohtml"),
+		abstmpl(templatesPath, "admin", "account_settings.gohtml"),
 	}
 
 	return func(w http.ResponseWriter, r *http.Request) {

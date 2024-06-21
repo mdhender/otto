@@ -164,6 +164,7 @@ func run(databasePath, assetsPath, templatesPath string, dev bool, devMagic, dev
 	serverCh := make(chan struct{})
 	go func() {
 		log.Printf("[server] serving %s\n", app.BaseURL())
+		log.Printf("[server] admin %s/admin\n", app.BaseURL())
 		log.Printf("[server] log in at %s/login\n", app.BaseURL())
 		log.Printf("[server] sign up at %s%s\n", app.BaseURL(), app.MagicLink())
 		if err := app.ListenAndServe(); !errors.Is(err, http.ErrServerClosed) {

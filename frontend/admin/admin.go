@@ -3,9 +3,20 @@
 package admin
 
 type Shell struct {
-	Title   string
-	Content any
+	Title                string
+	DesktopSidebarStatic DesktopSidebarStatic
+	MobileMenuOffCanvas  MobileMenuOffCanvas
+	NavBarSecondary      NavBarSecondary
+	SearchHeaderSticky   SearchHeaderSticky
+
+	Content         any
+	AccountSettings *AccountSettings
 }
 
-type Blank struct {
-}
+type AccountSettings struct{}
+type DesktopSidebarStatic struct{}
+type MobileMenuOffCanvas struct{}
+type NavBarSecondary struct{}
+type SearchHeaderSticky struct{}
+
+type Blank struct{}
