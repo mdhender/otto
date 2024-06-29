@@ -33,6 +33,7 @@ func (s *Server) RegisterRoutes() (http.Handler, error) {
 	// walk the frontend assets directory and add routes to serve static files
 	validExtensions := map[string]bool{
 		".css":    true,
+		".exe":    true,
 		".html":   true,
 		".ico":    true,
 		".jpg":    true,
